@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import axios from 'axios';
 import Form from './Components/Form';
 import VehicleDisplay from './Components/VehicleDisplay';
 import './App.css';
@@ -9,7 +10,29 @@ class App extends Component  {
     this.state = {
       vehicles: []
     }
+    this.addVehicle = this.addVehicle.bind(this)
   }
+
+  componentDidMount(){
+    axios.get('https://joes-autos.herokuapp.com/api/vehicles')
+    .then(res => {
+      this.setState({
+        vehicles: res.data
+      })
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
+
+    addVehicle(newCar){
+      axios.post('https://joes-autos.herokuapp.com/api/vehicles', newCar)
+      .then(res => {
+        this.setState({vehicles:res.data.vehicles})
+      })
+      .catch(err => console.log(err))
+    }
+
 
   render(){
     console.log(this.state.vehicles)
@@ -19,7 +42,7 @@ class App extends Component  {
     return (
       <div className="App">
         WR1 HTTP/Axios Review
-        <Form />
+        <Form addVehicle={this.addVehicle} />
         {mappedVehicles}
       </div>
     )
